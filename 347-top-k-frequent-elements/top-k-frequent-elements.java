@@ -1,53 +1,25 @@
 class Solution {
     public int[] topKFrequent(int[] nums, int k) {
 
+        // Step 1: Frequency Map
         Map<Integer, Integer> map = new HashMap<>();
-        int ans[] = new int[k];
 
-        // Count frequency
-        for (int i : nums) {
-            map.put(i, map.getOrDefault(i, 0) + 1);
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
         }
 
-        System.out.println(map);
+        // Step 2: Max Heap based on frequency
+        PriorityQueue<Integer> pq =
+                new PriorityQueue<>((a, b) -> map.get(b) - map.get(a));
 
-        List<Integer> val = new ArrayList<>(map.values());
-        Collections.sort(val);
+        // Add all keys into heap
+        pq.addAll(map.keySet());
 
-        int temp[] = new int[k];
+        // Step 3: Extract top k elements
+        int[] ans = new int[k];
 
-        int co = 0;
-
-        // Store top k frequencies
-        temp[co++] = val.get(val.size() - 1);
-
-        for (int i = val.size() - 2; i >= 0; i--) {
-
-            if (co >= k) {
-                break;
-            }
-
-            if (temp[co - 1] != val.get(i)) {
-                temp[co++] = val.get(i);
-            }
-        }
-
-        // Find numbers having those frequencies
-        int index = 0;
-
-        for (int freq : temp) {
-
-            for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-
-                if (entry.getValue() == freq) {
-
-                    ans[index++] = entry.getKey();
-
-                    if (index >= k) {
-                        return ans;
-                    }
-                }
-            }
+        for (int i = 0; i < k; i++) {
+            ans[i] = pq.poll();
         }
 
         return ans;
